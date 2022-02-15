@@ -3,9 +3,7 @@
 @section('content')
     <div class="movie-info border-b border-gray-800">
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
-            <a href="{{ $detail['homepage'] ?? '#' }}">
-                <img src="{{ config('services.tmdb.img').$detail['poster_path'] }}" alt="{{ $detail['title'] }}" class="w-full">
-            </a>
+            <img src="{{ config('services.tmdb.img').$detail['poster_path'] }}" alt="{{ $detail['title'] }}" class="w-64 lg:w-96">
             <div class="mt-3 md:ml-24 md:mt-0">
                 <h2 class="text-4xl font-semibold">{{ $detail['title'] }} ({{ \App\Helpers\General::release_date($detail['release_date']) }})</h2>
                 <div class="flex flex-wrap items-center text-gray-200 mt-2">
@@ -25,6 +23,7 @@
                 <p class="text-gray-300 mt-8">
                     {{ $detail['overview'] }}
                 </p>
+
                 <div class="mt-10">
                     <h4 class="text-white font-bold text-lg">Feature Cast</h4>
                     <div class="mt-4">
@@ -58,18 +57,57 @@
                         </p>
                     </div>
                 </div>
-                <div class="mt-10">
-                    <h4 class="text-white font-bold text-lg">Trailer</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($detail['videos']['results'] as $video)
-                            @if ($video['official'] && $video['type'] === 'Trailer')
-                                <div class="mt-8">
-                                    <iframe src="https://www.youtube.com/embed/{{ $video['key'] }}" frameborder="0" allowfullscreen class="w-full aspect-video"></iframe>
-                                </div>
-                            @endif
-                        @endforeach
+
+                <div x-data="{ isOpen: false, trailer: '' }">
+                    @if ($detail['videos']['results'])
+                    <div class="mt-10">
+                        <h4 class="text-white font-bold text-lg">Trailer</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach($detail['videos']['results'] as $video)
+                                @if ($video['official'] && $video['type'] === 'Trailer')
+                                    <div class="mt-8 relative">
+                                        <button
+                                            @click="
+                                                isOpen = true
+                                                trailer='https://www.youtube.com/embed/{{ $video['key'] }}'
+                                            "
+                                        >
+                                            <img src="http://i1.ytimg.com/vi/{{ $video['key'] }}/hqdefault.jpg" alt="Thumbnail" class="aspect-video cursor-pointer">
+                                            <span class="absolute top-0 left-0 bottom-0 right-0 flex justify-center items-center text-5xl group">
+                                                <i class="fa-regular fa-circle-play w-full opacity-0 group-hover:opacity-100 transition ease-in-out duration-1"></i>
+                                            </span>
+                                        </button>
+                                        <template x-if="isOpen">
+                                            <div
+                                                style="background-color: rgba(0, 0, 0, .5);"
+                                                class="fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto"
+                                            >
+                                                <div class="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                                                    <div class="bg-gray-900 rounded">
+                                                        <div class="flex justify-end pr-4 pt-2">
+                                                            <button
+                                                                @click="isOpen = false"
+                                                                @keydown.escape.window="isOpen = false"
+                                                                class="text-3xl leading-none hover:text-gray-300">&times;
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body px-8 py-8">
+                                                            <div class="responsive-container overflow-hidden relative" style="padding-top: 56.25%">
+                                                                <iframe class="responsive-iframe absolute top-0 left-0 w-full h-full" :src="trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
                     </div>
+                    @endif
                 </div>
+
             </div>
         </div>
     </div>
@@ -97,18 +135,50 @@
         </div>
     </div>
 
-    <div class="movie-image border-b border-gray-800">
-        <div class="container mx-auto px-4 py-16">
-            <h2 class="text-4xl font-semibold">Images</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                @foreach ($detail['images']['backdrops'] as $image)
-                    @if ($loop->index < 9)
-                        <div class="mt-8">
-                            <img src="{{ config('services.tmdb.img').$image['file_path'] }}" alt="{{ $detail['title'] }}" class="hover:opacity-75 transition ease-in-out duration-1">
+    @if ($detail['images']['backdrops'])
+    <div class="movie-images" x-data="{ isOpen: false, image: ''}">
+        <div class="movie-image border-b border-gray-800">
+            <div class="container mx-auto px-4 py-16">
+                <h2 class="text-4xl font-semibold">Images</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                    @foreach ($detail['images']['backdrops'] as $image)
+                        @if ($loop->index < 9)
+                            <div class="mt-8">
+                                <a
+                                    @click.prevent="
+                                        isOpen = true
+                                        image='{{ 'https://image.tmdb.org/t/p/original/'.$image['file_path'] }}'
+                                    "
+                                    href="#"
+                                >
+                                    <img src="{{ config('services.tmdb.img').$image['file_path'] }}" alt="{{ $detail['title'] }}" class="hover:opacity-75 transition ease-in-out duration-1">
+                                </a>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+                <div
+                    style="background-color: rgba(0, 0, 0, .5);"
+                    class="fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto"
+                    x-show="isOpen"
+                >
+                    <div class="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                        <div class="bg-gray-900 rounded">
+                            <div class="flex justify-end pr-4 pt-2">
+                                <button
+                                    @click="isOpen = false"
+                                    @keydown.escape.window="isOpen = false"
+                                    class="text-3xl leading-none hover:text-gray-300">&times;
+                                </button>
+                            </div>
+                            <div class="modal-body px-8 py-8">
+                                <img :src="image" alt="poster">
+                            </div>
                         </div>
-                    @endif
-                @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    @endif
 @endsection
