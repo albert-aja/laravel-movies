@@ -15,5 +15,6 @@
         @yield("content") 
         @include('layouts.footer')
         @livewireScripts
+        @yield("script") 
     </body>
 </html>
