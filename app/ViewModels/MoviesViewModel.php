@@ -29,7 +29,8 @@ class MoviesViewModel extends ViewModel
 
             return collect($movie)->merge([
                 'poster_path'   => config('services.tmdb.img').$movie['poster_path'],
-                'vote_average'  => $movie['vote_average'] * 10 . '%',
+                'vote_average'  => ($movie['vote_average'] > 0) 
+                                    ? ($movie['vote_average'] * 10 . '%') : 'N/A',
                 'release_date'  => General::b_date($movie['release_date']),
                 'genres'        => $genres
             ])->only([
@@ -47,7 +48,7 @@ class MoviesViewModel extends ViewModel
     }
 
     public function upcomingMovies(){
-        $upcoming = collect($this->upcomingMovies)->sortBy('release_date');
+        $upcoming = collect($this->upcomingMovies)->sortBy('popularity');
 
         return $this->formatMovie($upcoming);
     }

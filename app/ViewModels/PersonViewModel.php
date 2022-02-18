@@ -57,8 +57,11 @@ class PersonViewModel extends ViewModel
         return collect($this->detail)->merge([
             'known_for_department'  => $this->department[$this->detail['known_for_department']] ??          
                                         $this->detail['known_for_department'],
+            'biography'             => (!empty($this->detail['biography'])) 
+                                        ? $this->detail['biography'] : 'Biography for ' .$this->detail['name']. ' not found.',
             'profile_path'          => $profile,
-            'birthday'              => General::b_date($this->detail['birthday']),
+            'birthday'              => ($this->detail['birthday']) 
+                                        ? General::b_date($this->detail['birthday']) : $this->detail['birthday'],
             'age'                   => General::get_age($this->detail['birthday']).' years old',
             'gender'                => $gender,
             'social'                => $social,

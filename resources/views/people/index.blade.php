@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('title', 'Popular People')
+
 @section('content')
 
     <div class="container mx-auto px-4 py-16">
@@ -28,18 +30,6 @@
             <p class="infinite-scroll-last">End of content</p>
             <p class="infinite-scroll-error">No more pages to load</p>
         </div>
-        {{-- <div class="flex justify-between mt-16">
-            @if ($previous)
-                <a href="people?page={{ $previous }}"><i class="fa-solid fa-chevron-left mr-3"></i>Previous</a>
-            @else
-                <div></div>
-            @endif
-            @if ($next)
-                <a href="people?page={{ $next }}">Next<i class="fa-solid fa-chevron-right ml-3"></i></a>
-            @else
-                <div></div>
-            @endif
-        </div> --}}
     </div>
     
 @endsection

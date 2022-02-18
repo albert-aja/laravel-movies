@@ -1,4 +1,4 @@
-<nav class="border-b border-gray-800">
+<nav id="navbar" class="border-b border-gray-800">
     <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 py-6">
         <ul class="flex items-center flex-col md:flex-row">
             <li>

@@ -29,7 +29,8 @@ class TvShowsViewModel extends ViewModel
 
             return collect($show)->merge([
                 'poster_path'       => config('services.tmdb.img').$show['poster_path'],
-                'vote_average'      => $show['vote_average'] * 10 . '%',
+                'vote_average'      => ($show['vote_average'] > 0) 
+                                        ? ($show['vote_average'] * 10 . '%') : 'N/A',
                 'first_air_date'    => General::b_date($show['first_air_date']),
                 'genres'            => $genres
             ])->only([

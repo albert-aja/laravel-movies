@@ -27,7 +27,7 @@ class TvShowsController extends Controller
     }
     
     public function show($id){
-        $detail = General::callAPI('/tv/'.$id.'?append_to_response=credits,videos,images');
+        $detail = General::callAPI('/tv/'.$id.'?append_to_response=credits,videos,images,recommendations');
 
         $viewModel = new TvShowViewModel(
             $detail

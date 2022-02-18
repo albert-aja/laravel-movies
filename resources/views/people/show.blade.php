@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@section('title')
+    {{ $detail['name'] }}
+@endsection
+
 @section('content')
     <div class="movie-info border-b border-gray-800">
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row md:grid md:grid-cols-4">
@@ -43,13 +47,11 @@
             <div class="mt-3 md:ml-24 md:mt-0 md:col-start-2 md:col-span-3">
                 <h2 class="text-4xl font-semibold">{{ $detail['name'] }} ({{ $detail['known_for_department'] }})</h2>
                 <div class="flex flex-wrap items-center text-gray-200 mt-2">
-                    <i class="fa-solid fa-cake-candles text-gray-600 mr-1.5"></i>
                     @if ($detail['birthday'])
+                        <i class="fa-solid fa-cake-candles text-gray-600 mr-1.5"></i>
                         <span class="ml-1">{{ $detail['birthday'] }} ({{ $detail['age'] }}) in {{ $detail['place_of_birth'] }}</span>
-                    @else
-                        <span class="ml-1">-</span>
+                        <span class="mx-2">|</span>
                     @endif
-                    <span class="mx-2">|</span>
                     <span>{!! $detail['gender'] !!}</span>
                 </div>
 
@@ -89,7 +91,7 @@
                 <h2 class="text-4xl font-semibold">Images</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-5">
                     @foreach ($detail['images'] as $image)
-                        <div class="mt-4">
+                        <div class="mt-8">
                             <a
                                 @click.prevent="
                                     isOpen = true
@@ -107,8 +109,8 @@
                     class="fixed top-0 left-0 w-full h-fullitems-center shadow-lg overflow-y-auto"
                     x-show="isOpen"
                 >
-                    <div class="w-fit mx-auto lg:px-32 rounded-lg overflow-y-auto">
-                        <div class="bg-gray-900 rounded">
+                    <div class="w-fit mx-auto lg:px-32 overflow-y-auto">
+                        <div class="bg-gray-900 rounded-xl">
                             <div class="flex justify-end pr-4 pt-2">
                                 <button
                                     @click="isOpen = false"
